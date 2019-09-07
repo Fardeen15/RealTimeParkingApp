@@ -1,0 +1,59 @@
+.App {
+  text-align: center;
+}
+
+.SignInJumbotron{
+  width: 50%;
+  height: 70vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background:  #042d41;
+  transform: translate(-50%, -50%);
+}
+.SignInContainer{
+  padding-left: 100px;
+  padding-top: 150px;
+  padding-right: 100px;
+  align-content: center;
+  width: 100%;
+}
+.FloatBtn{
+  position: absolute;
+  top: 13%;
+  left: 13%;
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+}
+.slideItem{
+  height: 60vh;
+}
+.SlotAdd{
+  width: 50%;
+  margin-left: 22%;
+  margin-top: 2%;
+}
+#buttons {
+  height: 15vh;
+    width: 15%;
+    border: none;
+    outline: none;
+  background:  #042d41;
+color :whitesmoke;
+}
+#buttons:hover{
+  background: #09557a;
+  transition: 0.4s ease-in-out
+}
+#btnDiv{
+  margin-top: 20px;
+}
+.clearBTn{
+  position: relative;
+    /* top: 67%; */
+    left: 29%;
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+}
