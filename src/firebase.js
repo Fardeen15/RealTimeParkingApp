@@ -1,4 +1,4 @@
-import firebase from 'firebase'
+import firebase from'firebase'
 var firebaseConfig = {
     apiKey: "AIzaSyC14V46Mg3h7VUlmsA0lvIeU-iobqbujQ4",
     authDomain: "realtimeparkingapp.firebaseapp.com",

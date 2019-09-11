@@ -13,12 +13,47 @@ class BookingModal extends React.Component {
             StartTime: "",
             endTime: "",
             slotNo: this.props.value,
-            Area: this.props.Area
+            Area: this.props.Area,
+            para: false,
         }
     }
     change = (ev, val) => {
         this.setState({
             [val]: ev.target.value
+        }, () => {
+
+            let Statetime = this.state.StartTime.slice(0, 2)
+            let bookedtime = this.props.booked.StartTime.slice(0, 2)
+            let Statetime1 = this.state.endTime.slice(0, 2)
+            let bookedtime1 = this.props.booked.endTime.slice(0, 2)
+
+            let statemint = this.state.StartTime.slice(3, 5)
+            let bookedmint = this.props.booked.StartTime.slice(3, 5)
+            let statemint1 = this.state.endTime.slice(3, 5)
+            let bookedmint1 = this.props.booked.endTime.slice(3, 5)
+            if (val === "StartTime") {
+                if (`${this.state.date}${this.state.StartTime}` === `${this.props.booked.date}${this.props.booked.StartTime}` || `${this.state.date}${Statetime}` === `${this.props.booked.date}${bookedtime}` || `${this.state.date}${Statetime}${statemint}` > `${this.props.booked.date}${bookedtime}${bookedmint}` && `${this.state.date}${Statetime1}${statemint1}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`) {
+                    console.log(this.state.date, this.props.booked.date)
+                    this.setState({
+                        para: true
+                    })
+                } else {
+                    this.setState({
+                        para: false
+                    })
+                }
+            }
+            if (val === "endTime") {
+                if (`${this.state.date}${this.state.endTime}` === `${this.props.booked.date}${this.props.booked.endTime}` || `${this.props.booked.date}${this.props.booked.StartTime}` || `${this.state.date}${Statetime1}` === `${this.props.booked.date}${bookedtime1}` || `${this.state.date}${Statetime}${statemint}` > `${this.props.booked.date}${bookedtime}${bookedmint}` && `${this.state.date}${Statetime1}${statemint1}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`) {
+                    this.setState({
+                        para: true
+                    })
+                } else {
+                    this.setState({
+                        para: false
+                    })
+                }
+            }
         })
     }
     booked = () => {
@@ -29,23 +64,26 @@ class BookingModal extends React.Component {
             slotNo: this.props.value,
             Area: this.props.Area
         }
-        // console.log(this.props.date)
-        db.ref().child('slots').child(this.props.date).on('value', (snap) => {
-            var data = snap.val()
-            if (!data.bookedSlots) {
-                data.bookedSlots = [obj.slotNo]
-                db.ref().child('slots').child(this.props.date).set(data)
 
-                console.log(data, "if")
-            } else if(data.bookedSlots.length){
-                var booked = data.bookedSlots
-                booked.push(this.props.value)
-                // db.ref().child('slots').child(this.props.date).set(data)
-                console.log(booked, "else")
-                // db.ref().child('bookedSlots').child(this.props.date).set(data)
-
-            }
+        db.ref().child('bookedSlots').child(this.props.Area).child(obj.endTime).set(obj).then(() => {
+            this.props.close()
         })
+        // console.log(this.props.date)
+        // db.ref().child('slots').child(this.props.date).on('value', (snap) => {
+        //     var data = snap.val()
+        //     if (!data.bookedSlots) {
+        //         data.bookedSlots = [obj.slotNo]
+        //         db.ref().child('slots').child(this.props.date).set(data)
+
+        //         console.log(data, "if")
+        //     } else if(data.bookedSlots.length){
+        //         var booked = data.bookedSlots
+        //         booked.push(this.props.value)
+        //         // db.ref().child('slots').child(this.props.date).set(data)
+        //         console.log(booked, "else")
+
+        //     }
+        // })
     }
     render() {
         return (
@@ -62,6 +100,8 @@ class BookingModal extends React.Component {
               </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+
+
                     <Form>
                         <Form.Group controlId="formGridAddress1">
                             <Form.Label>SLot no</Form.Label>
@@ -80,18 +120,27 @@ class BookingModal extends React.Component {
 
                             <Form.Group as={Col} controlId="formGridPassword">
                                 <Form.Label>starting time</Form.Label>
-                                <Form.Control value={this.state.StartTime} onChange={(ev) => this.change(ev, "StartTime")} type="time" />
+                                <Form.Control disabled={this.state.para ? true : false} value={this.state.StartTime} onChange={(ev) => this.change(ev, "StartTime")} type="time" />
                             </Form.Group>
                             <Form.Group as={Col} controlId="formGridPassword">
                                 <Form.Label>Ending time</Form.Label>
-                                <Form.Control value={this.state.endTime} onChange={(ev) => this.change(ev, "endTime")} type="time" />
+                                <Form.Control disabled={this.state.para ? true : false} value={this.state.endTime} onChange={(ev) => this.change(ev, "endTime")} type="time" />
                             </Form.Group>
                         </Form.Row>
-
+                        {this.state.para ?
+                            <div>
+                                <p style={{ color: "red" }}>this slot bokked for today {this.props.booked.StartTime} at {this.props.booked.endTime} <button onClick={() => {
+                                    this.setState({
+                                        para: false
+                                    })
+                                }}>OK</button></p>
+                            </div>
+                            : null}
 
 
 
                     </Form>
+
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={this.booked} varient="info">Booked</Button>
