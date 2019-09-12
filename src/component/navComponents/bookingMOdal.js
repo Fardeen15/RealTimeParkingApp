@@ -21,46 +21,48 @@ class BookingModal extends React.Component {
         this.setState({
             [val]: ev.target.value
         }, () => {
+            if (this.props.booked) {
 
-            let Statetime = this.state.StartTime.slice(0, 2)
-            let bookedtime = this.props.booked.StartTime.slice(0, 2)
-            let Statetime1 = this.state.endTime.slice(0, 2)
-            let bookedtime1 = this.props.booked.endTime.slice(0, 2)
+                let Statetime = this.state.StartTime.slice(0, 2)
+                let bookedtime = this.props.booked.StartTime.slice(0, 2)
+                let Statetime1 = this.state.endTime.slice(0, 2)
+                let bookedtime1 = this.props.booked.endTime.slice(0, 2)
 
-            let statemint = this.state.StartTime.slice(3, 5)
-            let bookedmint = this.props.booked.StartTime.slice(3, 5)
-            let statemint1 = this.state.endTime.slice(3, 5)
-            let bookedmint1 = this.props.booked.endTime.slice(3, 5)
-            // if (val === "StartTime") {
-            //     if (`${this.state.date}${this.state.StartTime}` === `${this.props.booked.date}${this.props.booked.StartTime}`
-            //         || `${this.state.date}${Statetime}` === `${this.props.booked.date}${bookedtime}`
-            //         || `${this.state.date}${Statetime}${statemint}` > `${this.props.booked.date}${bookedtime}${bookedmint}`
-            //         && `${this.state.date}${Statetime}${statemint}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`) {
-            //         this.setState({
-            //             para: true
-            //         })
-            //     } else {
-            //         this.setState({
-            //             para: false
-            //         })
-            //     }
-            // }
-            if (val === "endTime") {
-                if (`${this.state.date}${this.state.endTime}` === `${this.props.booked.date}${this.props.booked.endTime}`
-                    || `${this.state.date}${this.state.endTime}` === `${this.props.booked.date}${this.props.booked.StartTime}`
-                    || `${this.state.date}${Statetime1}` === `${this.props.booked.date}${bookedtime1}`
-                    || `${this.state.date}${Statetime}${statemint}` > `${this.props.booked.date}${bookedtime}${bookedmint}`
-                    && `${this.state.date}${Statetime}${statemint}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`
-                    || `${this.state.date}${Statetime1}${statemint1}` > `${this.props.booked.date}${bookedtime}${bookedmint}`
-                    && `${this.state.date}${Statetime1}${statemint1}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`) {
-                    console.log(this.state.date, this.props.booked.date)
-                    this.setState({
-                        para: true
-                    })
-                } else {
-                    this.setState({
-                        para: false
-                    })
+                let statemint = this.state.StartTime.slice(3, 5)
+                let bookedmint = this.props.booked.StartTime.slice(3, 5)
+                let statemint1 = this.state.endTime.slice(3, 5)
+                let bookedmint1 = this.props.booked.endTime.slice(3, 5)
+                // if (val === "StartTime") {
+                //     if (`${this.state.date}${this.state.StartTime}` === `${this.props.booked.date}${this.props.booked.StartTime}`
+                //         || `${this.state.date}${Statetime}` === `${this.props.booked.date}${bookedtime}`
+                //         || `${this.state.date}${Statetime}${statemint}` > `${this.props.booked.date}${bookedtime}${bookedmint}`
+                //         && `${this.state.date}${Statetime}${statemint}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`) {
+                //         this.setState({
+                //             para: true
+                //         })
+                //     } else {
+                //         this.setState({
+                //             para: false
+                //         })
+                //     }
+                // }
+                if (val === "endTime") {
+                    if (`${this.state.date}${this.state.endTime}` === `${this.props.booked.date}${this.props.booked.endTime}`
+                        || `${this.state.date}${this.state.endTime}` === `${this.props.booked.date}${this.props.booked.StartTime}`
+                        || `${this.state.date}${Statetime1}` === `${this.props.booked.date}${bookedtime1}`
+                        || `${this.state.date}${Statetime}${statemint}` > `${this.props.booked.date}${bookedtime}${bookedmint}`
+                        && `${this.state.date}${Statetime}${statemint}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`
+                        || `${this.state.date}${Statetime1}${statemint1}` > `${this.props.booked.date}${bookedtime}${bookedmint}`
+                        && `${this.state.date}${Statetime1}${statemint1}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`) {
+                        console.log(this.state.date, this.props.booked.date)
+                        this.setState({
+                            para: true
+                        })
+                    } else {
+                        this.setState({
+                            para: false
+                        })
+                    }
                 }
             }
         })
@@ -77,10 +79,12 @@ class BookingModal extends React.Component {
         db.ref().child('bookedSlots').child(this.props.Area).child(`${obj.date}${obj.endTime}`).set(obj).then(() => {
             auth.onAuthStateChanged((user) => {
                 if (user) {
-                    db.ref().child('users').child(user.uid).child('BookingDetails').child(`${obj.date}${obj.endTime}`).set(obj)
+                    db.ref().child('users').child(user.uid).child('BookingDetails').child(`${obj.date}${obj.endTime}`).set(obj).then(() => {
+
+                        this.props.close()
+                    })
                 }
             })
-            this.props.close()
         })
     }
     render() {
