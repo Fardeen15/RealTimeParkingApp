@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
-import { db } from '../../firebase'
+import { db, auth } from '../../firebase'
 
 class BookingModal extends React.Component {
     constructor(props) {
@@ -31,20 +31,29 @@ class BookingModal extends React.Component {
             let bookedmint = this.props.booked.StartTime.slice(3, 5)
             let statemint1 = this.state.endTime.slice(3, 5)
             let bookedmint1 = this.props.booked.endTime.slice(3, 5)
-            if (val === "StartTime") {
-                if (`${this.state.date}${this.state.StartTime}` === `${this.props.booked.date}${this.props.booked.StartTime}` || `${this.state.date}${Statetime}` === `${this.props.booked.date}${bookedtime}` || `${this.state.date}${Statetime}${statemint}` > `${this.props.booked.date}${bookedtime}${bookedmint}` && `${this.state.date}${Statetime1}${statemint1}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`) {
-                    console.log(this.state.date, this.props.booked.date)
-                    this.setState({
-                        para: true
-                    })
-                } else {
-                    this.setState({
-                        para: false
-                    })
-                }
-            }
+            // if (val === "StartTime") {
+            //     if (`${this.state.date}${this.state.StartTime}` === `${this.props.booked.date}${this.props.booked.StartTime}`
+            //         || `${this.state.date}${Statetime}` === `${this.props.booked.date}${bookedtime}`
+            //         || `${this.state.date}${Statetime}${statemint}` > `${this.props.booked.date}${bookedtime}${bookedmint}`
+            //         && `${this.state.date}${Statetime}${statemint}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`) {
+            //         this.setState({
+            //             para: true
+            //         })
+            //     } else {
+            //         this.setState({
+            //             para: false
+            //         })
+            //     }
+            // }
             if (val === "endTime") {
-                if (`${this.state.date}${this.state.endTime}` === `${this.props.booked.date}${this.props.booked.endTime}` || `${this.props.booked.date}${this.props.booked.StartTime}` || `${this.state.date}${Statetime1}` === `${this.props.booked.date}${bookedtime1}` || `${this.state.date}${Statetime}${statemint}` > `${this.props.booked.date}${bookedtime}${bookedmint}` && `${this.state.date}${Statetime1}${statemint1}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`) {
+                if (`${this.state.date}${this.state.endTime}` === `${this.props.booked.date}${this.props.booked.endTime}`
+                    || `${this.state.date}${this.state.endTime}` === `${this.props.booked.date}${this.props.booked.StartTime}`
+                    || `${this.state.date}${Statetime1}` === `${this.props.booked.date}${bookedtime1}`
+                    || `${this.state.date}${Statetime}${statemint}` > `${this.props.booked.date}${bookedtime}${bookedmint}`
+                    && `${this.state.date}${Statetime}${statemint}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`
+                    || `${this.state.date}${Statetime1}${statemint1}` > `${this.props.booked.date}${bookedtime}${bookedmint}`
+                    && `${this.state.date}${Statetime1}${statemint1}` < `${this.props.booked.date}${bookedtime1}${bookedmint1}`) {
+                    console.log(this.state.date, this.props.booked.date)
                     this.setState({
                         para: true
                     })
@@ -65,25 +74,14 @@ class BookingModal extends React.Component {
             Area: this.props.Area
         }
 
-        db.ref().child('bookedSlots').child(this.props.Area).child(obj.endTime).set(obj).then(() => {
+        db.ref().child('bookedSlots').child(this.props.Area).child(`${obj.date}${obj.endTime}`).set(obj).then(() => {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.ref().child('users').child(user.uid).child('BookingDetails').child(`${obj.date}${obj.endTime}`).set(obj)
+                }
+            })
             this.props.close()
         })
-        // console.log(this.props.date)
-        // db.ref().child('slots').child(this.props.date).on('value', (snap) => {
-        //     var data = snap.val()
-        //     if (!data.bookedSlots) {
-        //         data.bookedSlots = [obj.slotNo]
-        //         db.ref().child('slots').child(this.props.date).set(data)
-
-        //         console.log(data, "if")
-        //     } else if(data.bookedSlots.length){
-        //         var booked = data.bookedSlots
-        //         booked.push(this.props.value)
-        //         // db.ref().child('slots').child(this.props.date).set(data)
-        //         console.log(booked, "else")
-
-        //     }
-        // })
     }
     render() {
         return (
@@ -129,9 +127,12 @@ class BookingModal extends React.Component {
                         </Form.Row>
                         {this.state.para ?
                             <div>
-                                <p style={{ color: "red" }}>this slot bokked for today {this.props.booked.StartTime} at {this.props.booked.endTime} <button onClick={() => {
+                                <p style={{ color: "red" }}>this slot bokked for today {this.props.booked.date} {this.props.booked.StartTime} at {this.props.booked.endTime} <button onClick={() => {
                                     this.setState({
-                                        para: false
+                                        para: false,
+                                        StartTime: "",
+                                        endTime: "",
+
                                     })
                                 }}>OK</button></p>
                             </div>

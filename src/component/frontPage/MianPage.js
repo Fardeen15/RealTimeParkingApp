@@ -10,6 +10,7 @@ import { auth, db } from '../../firebase';
 import AddAreaAndSlots from '../navComponents/AddAreaslots'
 import { withRouter } from 'react-router-dom'
 import Slots from '../navComponents/SLots'
+import BookingDetails from '../navComponents/bookingDetails'
 
 class MainPage extends React.Component {
     constructor() {
@@ -106,8 +107,8 @@ class MainPage extends React.Component {
                             <Tab eventKey="slots" title="Slots">
                                 <Slots />
                             </Tab>
-                            <Tab eventKey="Your Booking" title="Your Booking" >
-                                <h1>contact</h1>
+                            <Tab eventKey="Booking Details" title="Booking Details" >
+                                <BookingDetails/>
                             </Tab>
                             <Tab eventKey="Sign Out" title="Sign Out" >
                                 <button onClick={this.signout}>sign out</button>
