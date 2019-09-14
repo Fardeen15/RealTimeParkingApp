@@ -13,20 +13,20 @@ class Users extends React.Component {
   data = () => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-          db.ref().child('users').on('value', (snap) => {
-              if (snap.val()) {
-                var value = this.state.data;
-                var data = Object.values(snap.val())
-            for(var i = 0 ; i <  data.length; i ++){
-                if(data[i].personalInfo.person === 'user'){
+        db.ref().child('users').on('value', (snap) => {
+          if (snap.val()) {
+            var value = this.state.data;
+            var data = Object.values(snap.val())
+            for (var i = 0; i < data.length; i++) {
+              if (data[i].personalInfo.person === 'user') {
 
-                    value.push(data[i].personalInfo)
-                }
+                value.push(data[i].personalInfo)
+              }
             }
             this.setState({
               data: value
-            },()=>{
-                console.log(this.state.data)
+            }, () => {
+              console.log(this.state.data)
             })
           }
         })
@@ -38,36 +38,38 @@ class Users extends React.Component {
   }
   render() {
     return (
+      <div>
+        <h1 style={{  textAlign: "center" , fontFamily  : 'cursive'}}>Users</h1>
+        {this.state.data.length ?
+          this.state.data.map((value, index) => {
+            return (
+              <Accordion key={index} defaultActiveKey={index}>
+                <Card style={{ background: "none" }}>
+                  {/* <Card.Header> */}
 
-      this.state.data.length ?
-        this.state.data.map((value, index) => {
-          return (
-            <Accordion key = {index} defaultActiveKey={index}>
-              <Card>
-                {/* <Card.Header> */}
-
-                  <Accordion.Toggle style = {{cursor : "pointer"}}as={Card.Header} eventKey={value.email}>
-                   {value.email}
+                  <Accordion.Toggle style={{ cursor: "pointer" }} as={Card.Header} eventKey={value.email}>
+                    {value.email}
                   </Accordion.Toggle>
-                {/* </Card.Header> */}
-                <Accordion.Collapse eventKey={value.email}>
-                  <Card.Body> 
-                        <div>
-                          <p>
-                            <b>Address</b> : {value.Address}<br/>
-                            <b>city</b> : {value.city}<br/>
-                            <b>email</b> : {value.email}<br/>
-                            <b>number</b> : {value.number}<br/>
-                          </p>
-                        </div>
-                  </Card.Body>
-                </Accordion.Collapse>
-              </Card>
+                  {/* </Card.Header> */}
+                  <Accordion.Collapse eventKey={value.email}>
+                    <Card.Body>
+                      <div>
+                        <p>
+                          <b>Address</b> : {value.Address}<br />
+                          <b>city</b> : {value.city}<br />
+                          <b>email</b> : {value.email}<br />
+                          <b>number</b> : {value.number}<br />
+                        </p>
+                      </div>
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
 
-            </Accordion>
-          )
-        })
-        : null
+              </Accordion>
+            )
+          })
+          : null}
+      </div>
 
     )
   }

@@ -15,7 +15,6 @@ class BookingDetails extends React.Component {
       if (user) {
         db.ref().child('users').child(user.uid).child('BookingDetails').on('value', (snap) => {
           if (snap.val()) {
-
             this.setState({
               data: Object.values(snap.val())
             })
@@ -34,7 +33,7 @@ class BookingDetails extends React.Component {
         this.state.data.map((value, index) => {
           return (
             <Accordion key = {index} defaultActiveKey={index}>
-              <Card>
+              <Card style = {{background:"none"}}>
                 {/* <Card.Header> */}
 
                   <Accordion.Toggle style = {{cursor : "pointer"}}as={Card.Header} eventKey={value.Area,value.slotNo}>

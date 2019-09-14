@@ -41,7 +41,7 @@ class SignIn extends React.Component {
 
         return (
             <Card text="white" className="SignInJumbotron" fluid>
-                <Card.Header style={{ height: "17vh ", paddingTop: "85px" }}><h1>Sign IN</h1></Card.Header>
+                <Card.Header style={{ height: "17vh ", paddingTop: "85px" , textAlign: "center" }}><h1>Sign IN</h1></Card.Header>
                 <Card.Body className="SignInContainer">
                     <Form>
                         <Form.Group controlId="formBasicEmail">
@@ -54,7 +54,7 @@ class SignIn extends React.Component {
 
                     </Form>
                 </Card.Body>
-                <Card.Footer style={{ height: "17vh", }}>
+                <Card.Footer style={{ height: "17vh",  textAlign: "center"  }}>
                     <Button onClick={this.signin} variant="outline-secondary" name="button" >
                         Sign In
                             </Button> <Link to="/SignUp"><Button variant="outline-info" name="button">

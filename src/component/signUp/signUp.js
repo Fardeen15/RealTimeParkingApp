@@ -56,9 +56,8 @@ class SignUp extends React.Component {
             <div>
                 <Link to="/"><Button className="FloatBtn" variant="outline-info"><i className="fas fa-sign-in-alt"></i></Button></Link>
                 <Card className="SignInJumbotron" text="white" >
-                    <Card.Header><h1>SignUp</h1></Card.Header>
+                    <Card.Header style = {{ textAlign: "center" }}><h1>SignUp</h1></Card.Header>
                     <Card.Body>
-
                         <Form onSubmit={this.submit}>
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridEmail">

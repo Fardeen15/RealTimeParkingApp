@@ -18,10 +18,56 @@ class Slots extends React.Component {
             prop: "",
             bookedkey: [],
             bookedvalues: [],
-            booked : ""
+            booked: ""
         }
     }
+    delteBookings = () => {
+        var hour = new Date().getHours();
+        var mintues = new Date().getMinutes()
+        var date = new Date().getDate()
+        var month = new Date().getMonth() + 1
+        var year = new Date().getFullYear()
+        var hours = hour + 24 / 2;
+        var min =  mintues;
+        var dt = date;
+        var mnth = month
+        if(hours < 10){
+            hours = "0"+ hour;
+        } 
+        if(mnth < 10){
+            mnth = "0"+ month;
+        } 
+        if(dt < 10){
+            dt = "0"+ date;
+        }
+        if(min < 10){
+            min = "0" + mintues;
+        }
+        var newDate = `${year}-${mnth}-${dt}`
+        var endtime = `${hours}:${min}`
+        db.ref().child('bookedSlots').on('value',(snap)=>{
+            var key = Object.keys(snap.val())
+            for(var i = 0; i < key.length; i++){
+                db.ref().child('bookedSlots').child(key[i]).on('value',(snap)=>{
+                    if(snap.val()){
+                        var data = Object.values(snap.val());
+                        var keys = Object.keys(snap.val());
+                        for(var j  = 0 ; j < data.length; j++){
+                            if(data[j].date < newDate &&  data[j].endTime < endtime){
+                                db.ref().child('bookedSlots').child(key[i]).child(keys[j]).remove()
+                            }else{
+                                console.log('else')
+                            }
+                        }
+                    }
+                })
+
+            }
+        })
+        console.log(newDate)
+    }
     componentWillMount() {
+        this.delteBookings()
         auth.onAuthStateChanged((user) => {
             if (user) {
                 db.ref().child('slots').on('value', (snap) => {
@@ -71,7 +117,7 @@ class Slots extends React.Component {
                     this.setState({
                         bookedkey: key,
                         bookedvalues: data
-                    },()=>{
+                    }, () => {
 
                         console.log(this.state.bookedvalues)
                     })
@@ -88,19 +134,19 @@ class Slots extends React.Component {
         })
     }
     modal = (value) => {
-        if(this.state.bookedvalues.length){
+        if (this.state.bookedvalues.length) {
             this.setState({
-                booked : ""
+                booked: ""
             })
-            for(var i = 0; i< this.state.bookedvalues.length; i++){
+            for (var i = 0; i < this.state.bookedvalues.length; i++) {
                 console.log(value)
-                if(this.state.bookedvalues[i].slotNo === value + 1){
+                if (this.state.bookedvalues[i].slotNo === value + 1) {
                     this.setState({
-                        booked : this.state.bookedvalues[i]
+                        booked: this.state.bookedvalues[i]
                     })
                 }
             }
-        }else{
+        } else {
             console.log("else")
         }
         if (Number(value) || value === 0) {
@@ -119,7 +165,7 @@ class Slots extends React.Component {
     // componentDidMount(){
     //     console.log('false')
 
-      
+
 
     // }
     // 
@@ -130,17 +176,17 @@ class Slots extends React.Component {
                     <div>
                         <Button className="clearBTn" variant="outline-info" onClick={this.clear}><i className="fas fa-sign-in-alt"></i></Button>
                         <h3>{this.state.slectedArea} Avaliable Slots</h3>
-                        {this.state.number.map((value,index) => {
-                            return <div id="btnDiv" key={value}><button id="buttons"   onClick={() => this.modal(value)}>{value + 1}</button></div>
+                        {this.state.number.map((value, index) => {
+                            return <div id="btnDiv" key={value}><button id="buttons" onClick={() => this.modal(value)}>{value + 1}</button></div>
                         })}
                         {
                             this.state.modal ?
-                                <BookingModal booked = {this.state.booked} date={this.state.keys[this.state.index]} Area={this.state.slectedArea} value={this.state.prop} modal={this.state.modal} close={this.modal} />
+                                <BookingModal booked={this.state.booked} date={this.state.keys[this.state.index]} Area={this.state.slectedArea} value={this.state.prop} modal={this.state.modal} close={this.modal} />
                                 : null
                         }
                     </div>
                     :
-                    <Card className="text-center">
+                    <Card style = {{background:"none"}} className="text-center">
                         <Card.Header>avaliable areas</Card.Header>
                         {this.state.values.length ?
                             this.state.values.map((value, index) => {

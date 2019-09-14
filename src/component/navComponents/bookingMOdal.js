@@ -79,10 +79,11 @@ class BookingModal extends React.Component {
         db.ref().child('bookedSlots').child(this.props.Area).child(`${obj.date}${obj.endTime}`).set(obj).then(() => {
             auth.onAuthStateChanged((user) => {
                 if (user) {
-                    db.ref().child('users').child(user.uid).child('BookingDetails').child(`${obj.date}${obj.endTime}`).set(obj).then(() => {
+                    db.ref().child('notification').child(user.uid).child(`${obj.date}${obj.endTime}`).set(obj).then(()=>{
 
-                        this.props.close()
+                       this.props.close()
                     })
+                    
                 }
             })
         })

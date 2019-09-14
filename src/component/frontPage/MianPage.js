@@ -1,8 +1,4 @@
 import React from 'react'
-import image1 from './images/download.jpg'
-import image2 from './images/download1.png'
-import image3 from './images/download2.jpg'
-import Carousel from 'react-bootstrap/Carousel'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Users from '../navComponents/user'
@@ -11,12 +7,15 @@ import AddAreaAndSlots from '../navComponents/AddAreaslots'
 import { withRouter } from 'react-router-dom'
 import Slots from '../navComponents/SLots'
 import BookingDetails from '../navComponents/bookingDetails'
+import Noti from '../navComponents/notification'
+import Profile from '../navComponents/profile'
 
 class MainPage extends React.Component {
     constructor() {
         super()
         this.state = {
-            person: ""
+            data: "",
+            length: ""
         }
     }
     onAuth = () => {
@@ -24,6 +23,7 @@ class MainPage extends React.Component {
             if (user) {
                 db.ref().child('users').child(user.uid).child("personalInfo").on('value', (snap) => {
                     this.setState({
+                        data: snap.val(),
                         person: snap.val().person
                     })
                     console.log(true)
@@ -37,84 +37,78 @@ class MainPage extends React.Component {
             this.props.history.push('/')
         })
     }
+    notification = () => {
+        db.ref().child('notification').on('value', (snap) => {
+            if (snap.val()) {
+                var data = Object.values(snap.val());
+                this.setState({
+                    length: data.length
+                })
+            }
+        })
 
+    }
     componentWillMount() {
+        this.notification()
         this.onAuth()
     }
     render() {
         return (
             <div>
 
-                <Carousel>
-                    <Carousel.Item className="slideItem">
-                        <img
-                            className="d-block w-100 slideItem"
-                            src={image1}
-                            alt="First slide"
-                        />
-                        <Carousel.Caption>
-                            <h3>First slide label</h3>
-                            <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-                        </Carousel.Caption>
-                    </Carousel.Item>
-                    <Carousel.Item className="slideItem">
-                        <img
-                            className="d-block w-100 slideItem"
-                            src={image2}
-                            alt="Third slide"
-                        />
 
-                        <Carousel.Caption>
-                            <h3>Second slide label</h3>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        </Carousel.Caption>
-                    </Carousel.Item>
-                    <Carousel.Item className="slideItem">
-                        <img
-                            className="d-block w-100 slideItem"
-                            src={image3}
-                            alt="Third slide"
-                        />
-
-                        <Carousel.Caption>
-                            <h3>Third slide label</h3>
-                            <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
-                        </Carousel.Caption>
-                    </Carousel.Item>
-                </Carousel>
-                <div className="tab">
-
-                    {this.state.person === "Admin" ?
-                        <Tabs id="controlled-tab-example">
+                {this.state.person === "Admin" ?
+                    <div className="tab" class="animate-bottom">
+                        <Tabs id="Tab" style={{
+                            zIndex: 2,
+                            position: "fixed",
+                            top: "0%",
+                            background: "rgba(0,0,0,0.4)",
+                            width: "100%",
+                            border: "none"
+                        }} id="controlled-tab-example">
                             <Tab eventKey="user" title="Users">
                                 <Users />
                             </Tab>
                             <Tab eventKey="Area" title="Add Area And Slots">
                                 <AddAreaAndSlots />
                             </Tab>
-                            <Tab eventKey="contact" title="Contact" >
-                                <h1>contact</h1>
+                            <Tab eventKey="contact" title={"Notification" + " " + this.state.length} >
+                                <Noti />
                             </Tab>
                             <Tab eventKey="Sign Out" title="Sign Out" >
                                 <button onClick={this.signout}>sign out</button>
                             </Tab>
                         </Tabs>
-                        :
-                        <Tabs id="controlled-tab-example">
-                            <Tab eventKey="Your Profile" title="Your Profile">
-                                <h1>hello</h1>
-                            </Tab>
-                            <Tab eventKey="slots" title="Slots">
-                                <Slots />
-                            </Tab>
-                            <Tab eventKey="Booking Details" title="Booking Details" >
-                                <BookingDetails/>
-                            </Tab>
-                            <Tab eventKey="Sign Out" title="Sign Out" >
-                                <button onClick={this.signout}>sign out</button>
-                            </Tab>
-                        </Tabs>}
-                </div>
+                    </div>
+                    :
+                    this.state.person === 'user' ?
+                        <div className="tab" class="animate-bottom">
+                            <Tabs id="Tab" style={{
+                                zIndex: 2,
+                                position: "fixed",
+                                top: "0%",
+                                background: "rgba(0,0,0,0.4)",
+                                width: "100%",
+                                border: "none"
+                            }} id="controlled-tab-example">
+                                <Tab eventKey="Your Profile" title="Your Profile">
+                                    <Profile data={this.state.data} />
+                                </Tab>
+                                <Tab eventKey="slots" title="Slots">
+                                    <Slots />
+                                </Tab>
+                                <Tab eventKey="Booking Details" title="Booking Details" >
+                                    <BookingDetails />
+                                </Tab>
+                                <Tab eventKey="Sign Out" title="Sign Out" >
+                                    <button onClick={this.signout}>sign out</button>
+                                </Tab>
+                            </Tabs>
+                        </div>
+                        : 
+                        <div id="loader"></div>
+                        }
             </div>
         )
     }
